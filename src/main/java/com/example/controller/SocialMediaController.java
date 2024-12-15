@@ -28,8 +28,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @RestController
 public class SocialMediaController {
-    @Autowired static AccountService accounts;
-    @Autowired static MessageService messages;
+    @Autowired
+    AccountService accounts;
+    @Autowired
+    MessageService messages;
     
     @PostMapping("register")
     public ResponseEntity<Account> register(@RequestBody Account newUser) {
@@ -37,8 +39,8 @@ public class SocialMediaController {
         // success -> persist, return json of Account with accountId, 200 OK default
         // duplicate username -> 409 Conflict, return null?
         // unsuccessful, 400 client error
-        if (!newUser.getUsername().isBlank() && newUser.getUsername().length() > 4) {
-            if (!accounts.usernameExists(newUser.getUsername()))
+        if (!newUser.getUsername().isBlank() && newUser.getUsername().length() >= 4) {
+            if (accounts.usernameExists(newUser.getUsername()))
                 return new ResponseEntity<Account>(HttpStatus.CONFLICT);
 
             Optional<Account> res = accounts.create(newUser);

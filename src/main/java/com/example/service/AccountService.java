@@ -11,27 +11,27 @@ import com.example.repository.AccountRepository;
 
 @Service
 public class AccountService {
+    AccountRepository dao;
     @Autowired
-    static AccountRepository dao;
-
-    public Optional<Account> create(Account newUser) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
+    public AccountService(AccountRepository dao) {
+        this.dao = dao;
     }
 
-    public boolean usernameExists(String string) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'usernameExists'");
+    public Optional<Account> create(Account newUser) {
+        return Optional.of(dao.save(newUser));
+    }
+
+    public boolean usernameExists(String username) {
+        Account a = dao.findAccountByUsername(username);
+        return a != null;
     }
 
     public Optional<Account> getValid(Account user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getValidAccount'");
+        return Optional.ofNullable(dao.findAccountByUsernameAndPassword(user.getUsername(), user.getPassword()));
     }
 
-    public Optional<Account> getById(int postedBy) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAccountById'");
+    public Optional<Account> getById(int accountId) {
+        return Optional.ofNullable(dao.getById(accountId));
     }
 
 }

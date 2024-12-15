@@ -12,7 +12,7 @@ import com.example.repository.MessageRepository;
 @RestController
 public class MessageService {
     @Autowired
-    static MessageRepository dao;
+    MessageRepository dao;
 
     public Optional<Message> getById(int id) {
         // TODO Auto-generated method stub
