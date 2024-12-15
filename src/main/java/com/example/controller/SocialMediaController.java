@@ -65,9 +65,10 @@ public class SocialMediaController {
         // message not blank, postedBy is a user
         // success -> persist, return json of Message with messageId, 200 OK default
         // unsuccessful, 400 client error
-        if (!accounts.getById(newMessage.getPostedBy()).isPresent() && !newMessage.getMessageText().isBlank()) {
+        if (accounts.getById(newMessage.getPostedBy()).isPresent() && !newMessage.getMessageText().isBlank()) {
             Optional<Message> res = messages.createMessage(newMessage);
-            return new ResponseEntity<Message>(res.orElse(null), HttpStatus.OK);
+            if (res.isPresent())
+                return new ResponseEntity<Message>(res.get(), HttpStatus.OK);
         }
         return new ResponseEntity<Message>(HttpStatus.BAD_REQUEST);
     }
@@ -88,8 +89,8 @@ public class SocialMediaController {
     public ResponseEntity<Integer> deleteById(@PathVariable int messageId) {
         // exists -> 1
         // not exists -> empty
-        Optional<Integer> res = messages.deleteById(messageId);
-        return new ResponseEntity<Integer>(res.orElse(null), HttpStatus.OK);
+        int res = messages.deleteById(messageId);
+        return new ResponseEntity<Integer>(res == 1 ? 1 : null, HttpStatus.OK);
     }
 
     @PatchMapping("messages/{messageId}")
@@ -99,9 +100,10 @@ public class SocialMediaController {
         // successful -> update database, 1
         // not exists -> 400 client error
         String messageText = body.path("messageText").asText();
-        if (!messages.getById(messageId).isPresent() && !messageText.isBlank()) {
-            Optional<Integer> res = messages.updateMessageById(messageId, messageText);
-            return new ResponseEntity<Integer>(res.orElse(null), HttpStatus.OK);
+        if (messages.getById(messageId).isPresent() && !messageText.isBlank()) {
+            int res = messages.updateMessageById(messageId, messageText);
+            if (res == 1)
+                return new ResponseEntity<Integer>(res == 1 ? 1 : null, HttpStatus.OK);
         }
         return new ResponseEntity<Integer>(HttpStatus.BAD_REQUEST);
     }

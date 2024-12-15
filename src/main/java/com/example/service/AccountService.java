@@ -11,11 +11,8 @@ import com.example.repository.AccountRepository;
 
 @Service
 public class AccountService {
-    AccountRepository dao;
     @Autowired
-    public AccountService(AccountRepository dao) {
-        this.dao = dao;
-    }
+    AccountRepository dao;
 
     public Optional<Account> create(Account newUser) {
         return Optional.of(dao.save(newUser));
@@ -31,7 +28,7 @@ public class AccountService {
     }
 
     public Optional<Account> getById(int accountId) {
-        return Optional.ofNullable(dao.getById(accountId));
+        return dao.findById(accountId);
     }
 
 }

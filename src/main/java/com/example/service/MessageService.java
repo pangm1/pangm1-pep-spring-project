@@ -15,33 +15,38 @@ public class MessageService {
     MessageRepository dao;
 
     public Optional<Message> getById(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+        return dao.findById(id);
     }
 
     public Optional<List<Message>> getAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
+        return Optional.ofNullable(dao.findAll());
     }
 
     public Optional<Message> createMessage(Message newMessage) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createMessage'");
+        if (newMessage.getMessageText().length() <= 255)
+            return Optional.of(dao.save(newMessage));
+        return Optional.empty();
     }
 
-    public Optional<Integer> deleteById(int messageId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+    public int deleteById(int messageId) {
+        boolean exists = dao.existsById(messageId);
+        if (exists) dao.deleteById(messageId);
+        return exists ? 1 : 0;
     }
 
-    public Optional<Integer> updateMessageById(int messageId, String messageText) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateMessageById'");
+    public int updateMessageById(int messageId, String messageText) {
+        Optional<Message> opt = getById(messageId);
+        if (opt.isPresent() && messageText.length() <= 255) {
+            Message mod = opt.get();
+            mod.setMessageText(messageText);
+            dao.save(mod);
+            return 1;
+        }
+        return 0;
     }
 
     public Optional<List<Message>> getMessagesPostedBy(int accountId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMessagesPostedBy'");
+        return Optional.ofNullable(dao.findMessagesByPostedBy(accountId));
     }
 
 }
